@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: alc.start_repl.agent
+Agent-Class: alc.start_repl.agent
+

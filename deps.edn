@@ -1,0 +1,13 @@
+{
+ :paths ["src"]
+
+ :deps
+ {
+   ;; XXX: 1.10.0 may have problems
+   ;; XXX: 1.9.0 and above include spec
+   org.clojure/clojure {:mvn/version "1.8.0"}
+   ;; need >= 1.10 for tap>
+   ;; for attach api in jdk 8 -- DO NOT USE IN JDK 11 builds
+   ;;tools.jar {:local/root "/usr/lib/jvm/java-8-openjdk/lib/tools.jar"}
+ }
+}
