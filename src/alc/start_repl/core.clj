@@ -1,12 +1,13 @@
 (ns alc.start-repl.core
   (:require
+   [alc.start-repl.impl.pid :as asi.p]
    [clojure.java.io :as cji]
    [clojure.string :as cs])
   ;; XXX: ibm has their own package apparently...
   (:import [com.sun.tools.attach
             AgentInitializationException
             AgentLoadException
-            VirtualMachine VirtualMachineDescriptor]))
+            VirtualMachine]))
 
 ;; NOTES
 ;;
@@ -29,68 +30,6 @@
 
 (set! *warn-on-reflection* true)
 
-(defn clojure-jvm-matcher
-  [[key value]]
-  (when (re-find #"^(clojure|boot)\." key)
-    [key value]))
-
-(defn clojure-server-matcher
-  [[key value]]
-  (when (re-find #"^clojure\.server\.(.*)" key)
-    [key value]))
-
-(defn scan-jvms
-  []
-  (doall
-    (reduce
-      (fn [stats ^VirtualMachineDescriptor vmd]
-        (if-let [^VirtualMachine vm
-                 (try
-                   (VirtualMachine/attach vmd)
-                   (catch Exception _
-                     nil))]
-          (let [pid (.id vmd)
-                ^java.util.Properties props (.getSystemProperties vm)
-                user-dir (.getProperty props "user.dir")
-                ;; XXX: may not be robust
-                cmd (.getProperty props "sun.java.command")
-                clojure-entries
-                (keep clojure-jvm-matcher props)
-                repl-entries
-                (keep clojure-server-matcher props)
-                results {:clojure-entries clojure-entries
-                         :cmd cmd
-                         :pid pid
-                         :props props
-                         :repl-entries repl-entries
-                         :user-dir user-dir}]
-            (.detach vm)
-            (conj stats results))
-          stats))
-      []
-      (VirtualMachine/list))))
-
-;; XXX: skip leiningen process; likely there is corr process that isn't skipped
-(defn clojure?
-  [{:keys [:cmd :clojure-entries] :as m}]
-  (when (or (and (cs/starts-with? cmd "clojure.main")
-              (not (cs/starts-with? cmd
-                     "clojure.main -m leiningen.core.main")))
-          (some (fn [[k _]]
-                  (= k "boot.class.path"))
-            clojure-entries))
-    m))
-
-(defn no-repl?
-  [{:keys [:repl-entries] :as m}]
-  (when (= 0 (count repl-entries))
-    m))
-
-(defn paths-eq?
-  [path-a path-b]
-  (= (.getCanonicalPath (cji/file path-a))
-    (.getCanonicalPath (cji/file path-b))))
-
 (defn instruct-vm
   [pid port agent-jar]
    (when-let [^VirtualMachine vm
@@ -112,8 +51,15 @@
        (catch AgentLoadException e
          (println "AgentLoadException")
          (println "message:" (.getMessage e)))
+       ;; XXX: this can happen, yet loading may have been successful
+       (catch java.io.IOException e
+         (println "there was an exception thrown, but repl may have started")
+         (println "java.io.IOException")
+         (println "message:" (.getMessage e)))
+       ;; XXX: what could happen here?
        (catch Exception e
-         (println "unexpected exception")
+         (println e)
+         (println "unexpected exception: please report to maintainer")
          (println "message:" (.getMessage e))))
      (.detach vm)))
 
@@ -137,30 +83,6 @@
                              full-path)))))
                paths)))))
 
-(defn find-pid
-  [ctx]
-  (let [proj-dir (if-let [proj-dir (:proj-dir ctx)]
-                   proj-dir
-                   (System/getProperty "user.dir"))
-        ctx (assoc ctx :proj-dir proj-dir)
-        jvms (scan-jvms)
-        ctx (assoc ctx :jvms jvms)
-        clojures (keep clojure? jvms)
-        ctx (assoc ctx :clojures clojures)
-        ;; XXX: only checking clojure socket repl (not shadow-cljs or boot?)
-        no-repls (keep no-repl? clojures)
-        ctx (assoc ctx :no-repls no-repls)
-        ;; XXX: only match things that don't seem to have socket repls
-        matches (filter (fn [{:keys [:user-dir]}]
-                          (paths-eq? proj-dir user-dir))
-                  no-repls)
-        ctx (assoc ctx :matches matches)]
-    ;; XXX: decide what to do if there is more than one match
-    (if (= 1 (count matches))
-      (let [stat (first matches)]
-        (assoc ctx
-          :pid (:pid stat)))
-      ctx)))
 
 (defn start-repl
   [{:keys [:agent-jar :debug :pid :port :proj-dir]}]
@@ -180,7 +102,7 @@
              :proj-dir proj-dir}
         ctx (if pid
               (assoc ctx :pid pid)
-              (find-pid ctx))
+              (asi.p/find-pid ctx))
         pid (if pid pid
                 (:pid ctx))]
     (assert pid "Failed to determine pid")
@@ -189,17 +111,15 @@
 
 (comment
 
-  (scan-jvms)
+  ;; XXX: pid not likely to be correct here
+  (instruct-vm 17364 8987
+    (str (System/getenv "HOME")
+      "/src/alc.start-repl/start-socket-repl-agent.jar"))
 
   (start-repl {:debug true
                :proj-dir
                (str (System/getenv "HOME")
                  "/src/four-horsemen-of-apocalypse.sogaiu")})
-
-  ;; XXX: pid not likely to be correct here
-  (instruct-vm 17364 8987
-    (str (System/getenv "HOME")
-      "/src/alc.start-repl/start-socket-repl-agent.jar"))
 
   (start-repl {:debug true
                :port 8987
