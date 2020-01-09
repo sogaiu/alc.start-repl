@@ -1,9 +1,25 @@
 (ns alc.start-repl.impl.pid
   (:require
    [clojure.java.io :as cji]
-   [clojure.string :as cs])
+   [clojure.string :as cs]))
+
+;; XXX: to arrange for things to also work on java <= 8
+(let [jvm-spec-ver (System/getProperty "java.vm.specification.version")]
+  (when (< (Double. jvm-spec-ver) 2)
+    (let [tools-jar (clojure.java.io/file (System/getProperty "java.home")
+                      ".." "lib" "tools.jar")
+          add-jar-path
+          (fn [^java.io.File jar-path]
+            (let [url (java.net.URL. (-> jar-path .toURI .toString))
+                  loader (ClassLoader/getSystemClassLoader)
+                  meth (.getDeclaredMethod java.net.URLClassLoader
+                         "addURL" (into-array Class [java.net.URL]))]
+              (.setAccessible meth true)
+              (.invoke meth loader (into-array [url]))))]
+      (when (.exists tools-jar)
+        (add-jar-path tools-jar))))
   ;; XXX: ibm has their own package apparently...
-  (:import [com.sun.tools.attach
+  (import '[com.sun.tools.attach
             VirtualMachine VirtualMachineDescriptor]))
 
 (set! *warn-on-reflection* true)
