@@ -61,23 +61,22 @@
          agent-jar
          (str port)) ; XXX: work on the format of the passed arg here?
        (catch AgentInitializationException e
-         (println "AgentInitializationException")
-         (println "message:" (.getMessage e)))
+         (println "AgentInitializationException, repl may not have started")
+         (println "  message:" (.getMessage e))
+         (println e))
        ;; XXX: seems to happen, yet loading seems successful...
        (catch AgentLoadException e
-         (println "there was an exception thrown, but repl may have started")
-         (println "AgentLoadException")
-         (println "message:" (.getMessage e)))
+         (println "AgentLoadException, but repl may have started")
+         #_(println "  message:" (.getMessage e)))
        ;; XXX: this can happen, yet loading may have been successful
        (catch java.io.IOException e
-         (println "there was an exception thrown, but repl may have started")
-         (println "java.io.IOException")
-         (println "message:" (.getMessage e)))
+         (println "java.io.IOException, but repl may have started")
+         #_(println "  message:" (.getMessage e)))
        ;; XXX: what could happen here?
        (catch Exception e
-         (println e)
-         (println "unexpected exception: please report to maintainer")
-         (println "message:" (.getMessage e))))
+         (println "Unexpected exception: please report to maintainer")
+         (println "  message:" (.getMessage e))
+         (println e)))
      (.detach vm)))
 
 ;; XXX: review logic here
@@ -127,9 +126,9 @@
         pid (if pid pid
                 (:pid ctx))]
     (assert pid "Failed to determine pid")
-    ;; XXX
-    (println (str "Trying to start repl for pid: " pid " on port: " port))
     (instruct-vm ^String pid port agent-jar)
+    ;; XXX
+    (println (str "Tried to start repl for pid: " pid " on port: " port))
     (when debug ctx)))
 
 (comment
