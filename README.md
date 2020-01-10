@@ -24,7 +24,8 @@ Suppose there is a running Clojure process with project directory `/home/alice/a
 Start a socket REPL on port 7650:
 
 ```
-$ clj -Sdeps '{:deps {alc.start-repl {:git/url "https://github.com/sogaiu/alc.start-repl" :sha "60406784d8296e1eff2b9bb1c859d4d0b6f67aa8"}}}' -m alc.start-repl.main '{:port 7650 :proj-dir "/home/alice/a-clj-proj-dir"}'
+$ cd /home/alice/a-clj-proj-dir
+$ clj -Sdeps '{:deps {alc.start-repl {:git/url "https://github.com/sogaiu/alc.start-repl" :sha "60406784d8296e1eff2b9bb1c859d4d0b6f67aa8"}}}' -m alc.start-repl.main '{:port 7650}'
 ```
 
 ## Usage
