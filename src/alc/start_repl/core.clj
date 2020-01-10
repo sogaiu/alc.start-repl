@@ -113,6 +113,9 @@
                                         "/start-socket-repl-agent.jar")]
                         (assert agent-jar "Failed to create agent-jar")
                         agent-jar))
+        _ (when port
+            (assert (asi.n/check-port port)
+              (str "Port unavailable: " port)))
         port (or port (asi.n/find-port))
         _ (assert port "Failed to choose suitable port")
         ctx {:agent-jar agent-jar

@@ -12,20 +12,22 @@
 
 (defn check-port
   [port]
-  (let [addr (try
-               (InetAddress/getLocalHost)
+  (when-let [addr
+             (try
+               ;; XXX: possibly want to allow address specification
+               (InetAddress/getByAddress (bytes (byte-array [127 0 0 1])))
                (catch UnknownHostException _
                  ;; XXX
                  (println "failed to determine localhost address")
                  nil))]
-    (when addr
-      (when-let [sock (try
-                        (ServerSocket. port 0 addr)
-                        (catch java.io.IOException _
-                          ;; XXX
-                          (println "failed to listen on localhost port:" port)
-                          nil))]
-        (get-and-close-port sock)))))
+    (when-let [^ServerSocket sock
+               (try
+                 (ServerSocket. port 0 addr)
+                 (catch java.io.IOException _
+                   ;; XXX
+                   (println "failed to create socket for:" port)
+                   nil))]
+      (get-and-close-port sock))))
 
 (defn find-port
   []
@@ -49,6 +51,10 @@
 
   (check-port 53)
 
+  (check-port 2357)
+
   (check-port 9000)
+
+  (check-port 9001)
 
   )
