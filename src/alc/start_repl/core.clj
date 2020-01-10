@@ -8,14 +8,20 @@
 ;; TODO:
 ;;
 ;; - test for both java 8 and 11
-;; - move some things out of core.clj
+;; - consider handling of case of multiple processes for single project
+;; - repl features
+;;   - port auto-selection?
+;;   - trying different numbers upon bind failure?
+;;   - starting prepl instead?
 ;; - following not supported (yet?)
 ;;   - boot socket repl
 ;;     (loadAgent fails -- NoClassDefFoundError: cloure/lang/Var)
 ;;     it's easy to start a boot socket repl though, so may be it's not so
 ;;     important
 ;; - figure out why AgentLoadException is occuring -- works, but 8 vs 11?
-;; - sync docs
+;; - update docs
+;;   - mention dependency on attach api -> some jdks may not work?
+;;   - document process of building agent jar
 
 (ns alc.start-repl.core
   (:require
@@ -47,7 +53,7 @@
      (try
        (.loadAgent vm
          agent-jar
-         (str port)) ; XXX: work on the format of the passed arg here
+         (str port)) ; XXX: work on the format of the passed arg here?
        (catch AgentInitializationException e
          (println "AgentInitializationException")
          (println "message:" (.getMessage e)))

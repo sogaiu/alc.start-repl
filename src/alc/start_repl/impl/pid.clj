@@ -82,6 +82,7 @@
     (cs/split #"@")
     first))
 
+;; XXX: return multiple pids if more than one found?
 (defn find-pid
   [ctx]
   (let [proj-dir (if-let [proj-dir (:proj-dir ctx)]
