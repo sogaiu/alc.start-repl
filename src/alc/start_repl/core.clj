@@ -26,6 +26,7 @@
 (ns alc.start-repl.core
   (:require
    [alc.start-repl.impl.attach :as asi.a]
+   [alc.start-repl.impl.net :as asi.n]
    [alc.start-repl.impl.pid :as asi.p]
    [clojure.java.io :as cji]
    [clojure.string :as cs]))
@@ -107,8 +108,9 @@
                                         "/start-socket-repl-agent.jar")]
                         (assert agent-jar "Failed to create agent-jar")
                         agent-jar))
+        port (or port (asi.n/find-port))
         ctx {:agent-jar agent-jar
-             :port (or port 7659)
+             :port port
              :proj-dir proj-dir}
         ctx (if pid
               (assoc ctx :pid pid)
