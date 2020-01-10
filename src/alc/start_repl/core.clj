@@ -109,6 +109,7 @@
                         (assert agent-jar "Failed to create agent-jar")
                         agent-jar))
         port (or port (asi.n/find-port))
+        _ (assert port "Failed to choose suitable port")
         ctx {:agent-jar agent-jar
              :port port
              :proj-dir proj-dir}
@@ -118,6 +119,8 @@
         pid (if pid pid
                 (:pid ctx))]
     (assert pid "Failed to determine pid")
+    ;; XXX
+    (println (str "Trying to start repl for pid: " pid " on port: " port))
     (instruct-vm ^String pid port agent-jar)
     (when debug ctx)))
 
