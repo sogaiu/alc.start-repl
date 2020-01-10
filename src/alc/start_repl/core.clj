@@ -19,32 +19,20 @@
 
 (ns alc.start-repl.core
   (:require
+   [alc.start-repl.impl.attach :as asi.a]
    [alc.start-repl.impl.pid :as asi.p]
    [clojure.java.io :as cji]
    [clojure.string :as cs]))
 
 (set! *warn-on-reflection* true)
 
-;; XXX: to arrange for things to also work on java <= 8
-(let [jvm-spec-ver (System/getProperty "java.vm.specification.version")]
-  (when (< (Double. jvm-spec-ver) 2)
-    (let [tools-jar (clojure.java.io/file (System/getProperty "java.home")
-                      ".." "lib" "tools.jar")
-          add-jar-path
-          (fn [^java.io.File jar-path]
-            (let [url (java.net.URL. (-> jar-path .toURI .toString))
-                  loader (ClassLoader/getSystemClassLoader)
-                  meth (.getDeclaredMethod java.net.URLClassLoader
-                         "addURL" (into-array Class [java.net.URL]))]
-              (.setAccessible meth true)
-              (.invoke meth loader (into-array [url]))))]
-      (when (.exists tools-jar)
-        (add-jar-path tools-jar))))
-  ;; XXX: ibm has their own package apparently...
-  (import '[com.sun.tools.attach
-            AgentInitializationException
-            AgentLoadException
-            VirtualMachine]))
+(asi.a/ensure-attach-cp)
+
+;; XXX: ibm has their own package apparently...
+(import '[com.sun.tools.attach
+          AgentInitializationException
+          AgentLoadException
+          VirtualMachine])
 
 (defn instruct-vm
   [pid port agent-jar]
