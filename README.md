@@ -25,7 +25,7 @@ Start a socket REPL on port 7650:
 
 ```
 $ cd /home/alice/a-clj-proj-dir
-$ clj -Sdeps '{:deps {alc.start-repl {:git/url "https://github.com/sogaiu/alc.start-repl" :sha "60406784d8296e1eff2b9bb1c859d4d0b6f67aa8"}}}' -m alc.start-repl.main '{:port 7650}'
+$ clj -Sdeps '{:deps {alc.start-repl {:git/url "https://github.com/sogaiu/alc.start-repl" :sha "3d135c9e04704a60b056b98ad186bf401ba82b9d"}}}' -m alc.start-repl.main '{:port 7650}'
 ```
 
 ## Usage
@@ -37,7 +37,7 @@ Edit the `:aliases` section of `~/.clojure/deps.edn` to contain:
    {
     :extra-deps {sogaiu/alc.start-repl
                  {:git/url "https://github.com/sogaiu/alc.start-repl"
-                  :sha "60406784d8296e1eff2b9bb1c859d4d0b6f67aa8"
+                  :sha "3d135c9e04704a60b056b98ad186bf401ba82b9d"
     :main-opts ["-m" "alc.start-repl.main"]
    }
 ```
