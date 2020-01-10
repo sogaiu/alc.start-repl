@@ -9,10 +9,16 @@
 ;;
 ;; - test for both java 8 and 11
 ;; - consider handling of case of multiple processes for single project
+;;   - if there are multiple pids detected and none were specified,
+;;     just exit reporting all detected pids?
 ;; - repl features
-;;   - port auto-selection?
+;;   - port auto-selection
+;;     - support providing a set or range of port numbers to choose from?
+;;   - check that port is actually available
 ;;   - trying different numbers upon bind failure?
 ;;   - starting prepl instead?
+;; - consider implications of hard-wiring an ipv4 address (127.0.0.1)
+;;   - arrange to pass agent address to bind to as param?
 ;; - following not supported (yet?)
 ;;   - boot socket repl
 ;;     (loadAgent fails -- NoClassDefFoundError: cloure/lang/Var)
@@ -20,7 +26,6 @@
 ;;     important
 ;; - figure out why AgentLoadException is occuring -- works, but 8 vs 11?
 ;; - update docs
-;;   - mention dependency on attach api -> some jdks may not work?
 ;;   - document process of building agent jar
 
 (ns alc.start-repl.core

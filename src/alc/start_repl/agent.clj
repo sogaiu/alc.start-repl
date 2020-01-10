@@ -8,10 +8,6 @@
   (:gen-class
    :methods [^:static [agentmain [String] void]]))
 
-;; TODO:
-;;
-;; - consider implications of hard-wiring an ipv4 address (127.0.0.1)
-
 ;; in java >= 9, (.getContextClassLoader (Thread/currentThread)) returns nil
 ;; when we need it to be otherwise; that messes up clojure.main/repl
 ;;
