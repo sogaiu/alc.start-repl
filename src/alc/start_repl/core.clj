@@ -59,6 +59,7 @@
          (println "message:" (.getMessage e)))
        ;; XXX: seems to happen, yet loading seems successful...
        (catch AgentLoadException e
+         (println "there was an exception thrown, but repl may have started")
          (println "AgentLoadException")
          (println "message:" (.getMessage e)))
        ;; XXX: this can happen, yet loading may have been successful
