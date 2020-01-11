@@ -69,9 +69,9 @@
                                pids (:pids ctx)
                                pid (first pids)]
                            [(assoc ctx :pid pid)
-                            pids pid]
-                           [ctx
-                            [pid] pid]))]
+                            pids pid])
+                         [ctx
+                          [pid] pid])]
     (assert pid
       "Failed to determine pid")
     (assert (= (count pids) 1)
