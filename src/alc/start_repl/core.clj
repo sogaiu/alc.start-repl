@@ -8,15 +8,13 @@
 ;; TODO:
 ;;
 ;; - test for both java 8 and 11
-;; - consider handling of case of multiple processes for single project
-;;   - if there are multiple pids detected and none were specified,
-;;     just exit reporting all detected pids?
+;; - multiple processes matching for single project
+;;   - always(?) give feedback when multiple pids detected?
 ;; - repl features
+;;   - starting prepl instead?
 ;;   - port auto-selection
 ;;     - support providing a set or range of port numbers to choose from?
-;;   - check that port is actually available
 ;;   - trying different numbers upon bind failure?
-;;   - starting prepl instead?
 ;; - consider implications of hard-wiring an ipv4 address (127.0.0.1)
 ;;   - arrange to pass agent address to bind to as param?
 ;; - following not supported (yet?)
@@ -24,6 +22,8 @@
 ;;     (loadAgent fails -- NoClassDefFoundError: cloure/lang/Var)
 ;;     it's easy to start a boot socket repl though, so may be it's not so
 ;;     important
+;; - possible to get a good idea of whether repl started by examining
+;;   external jvm's system properties -- but this may not be worth it
 ;; - figure out why AgentLoadException is occuring -- works, but 8 vs 11?
 ;; - update docs
 ;;   - document process of building agent jar
