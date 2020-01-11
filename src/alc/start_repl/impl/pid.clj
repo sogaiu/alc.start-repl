@@ -82,8 +82,7 @@
     (cs/split #"@")
     first))
 
-;; XXX: return multiple pids if more than one found?
-(defn find-pid
+(defn find-pids
   [ctx]
   (let [proj-dir (if-let [proj-dir (:proj-dir ctx)]
                    proj-dir
@@ -103,17 +102,18 @@
                             (paths-eq? proj-dir user-dir)))
                   no-repls)
         ctx (assoc ctx :matches matches)]
-    ;; XXX: decide what to do if there is more than one match
-    (if (= 1 (count matches))
-      (let [stat (first matches)]
-        (assoc ctx
-          :pid (:pid stat)))
-      ctx)))
+    (assoc ctx
+      :pids (map #(:pid %)
+              matches))))
 
 (comment
 
   (own-pid)
 
   (scan-jvms)
+
+  (let [ctx {:proj-dir (str (System/getenv "HOME")
+                         "/src/augistints")}]
+    (:pids (find-pids ctx)))
 
   )

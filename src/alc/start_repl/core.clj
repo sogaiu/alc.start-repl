@@ -118,14 +118,21 @@
         port (or port (asi.n/find-port))
         _ (assert port "Failed to choose suitable port")
         ctx {:agent-jar agent-jar
+             :pid pid
              :port port
              :proj-dir proj-dir}
-        ctx (if pid
-              (assoc ctx :pid pid)
-              (asi.p/find-pid ctx))
-        pid (if pid pid
-                (:pid ctx))]
-    (assert pid "Failed to determine pid")
+        [ctx pids pid] (if-not pid
+                         (let [ctx (asi.p/find-pids ctx)
+                               pids (:pids ctx)
+                               pid (first pids)]
+                           [(assoc ctx :pid pid)
+                            pids pid]
+                           [ctx
+                            [pid] pid]))]
+    (assert pid
+      "Failed to determine pid")
+    (assert (= (count pids) 1)
+      (str "Did not find exactly one matching pid: " pids))
     (instruct-vm ^String pid port agent-jar)
     ;; XXX
     (println (str "Tried to start repl for pid: " pid " on port: " port))
