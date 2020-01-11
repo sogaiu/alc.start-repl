@@ -47,9 +47,11 @@
 
 (comment
 
+  (require '[clojure.java.io :as cji])
+
   ;; XXX: pid not likely to be correct here
   (instruct-vm 17364 8987
-    (str (System/getenv "HOME")
-      "/src/alc.start-repl/start-socket-repl-agent.jar"))
+    (.getPath (cji/file (System/getenv "HOME")
+                "src" "alc.start-repl" "start-socket-repl-agent.jar")))
 
   )

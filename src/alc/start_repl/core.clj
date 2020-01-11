@@ -33,23 +33,27 @@
    [alc.start-repl.impl.pid :as asi.p]
    [alc.start-repl.impl.util :as asi.u]
    [alc.start-repl.impl.vm :as asi.v]
-   [clojure.java.io :as cji]))
+   [clojure.java.io :as cji]
+   [clojure.string :as cs]))
 
 (set! *warn-on-reflection* true)
 
 (defn start-repl
   [{:keys [:agent-jar :debug :pid :port :proj-dir]}]
-  (let [agent-jar (if agent-jar agent-jar
-                      ;; XXX: generate jar or use a pre-compiled one?
-                      (let [jcp (System/getProperty "java.class.path")
-                            src-dir (asi.u/find-alcsr-src-dir jcp)
-                            _ (assert src-dir "Failed to find source directory")
-                            alcsr-src-dir (.getParent (cji/file src-dir))
-                            ;; XXX: windows paths
-                            agent-jar (str alcsr-src-dir
-                                        "/start-socket-repl-agent.jar")]
-                        (assert agent-jar "Failed to create agent-jar")
-                        agent-jar))
+  (let [agent-jar
+        (if agent-jar agent-jar
+            ;; XXX: generate jar or use a pre-compiled one?
+            (let [jcp (System/getProperty "java.class.path")
+                  src-dir (asi.u/find-alcsr-src-dir jcp)
+                  _ (assert src-dir
+                      (str "\n"
+                        "Failed to find source directory"))
+                  alcsr-src-dir (.getParent (cji/file src-dir))
+                  agent-jar
+                  (.getPath (cji/file alcsr-src-dir
+                              "start-socket-repl-agent.jar"))]
+              (assert agent-jar "Failed to create agent-jar")
+              agent-jar))
         _ (when port
             (assert (asi.n/check-port port)
               (str "Port unavailable: " port)))
@@ -80,43 +84,46 @@
 
   (start-repl {:debug true
                :proj-dir
-               (str (System/getenv "HOME")
-                 "/src/four-horsemen-of-apocalypse.sogaiu")})
+               (.getPath (cji/file (System/getenv "HOME")
+                           "src"
+                           "four-horsemen-of-apocalypse.sogaiu"))})
 
   (start-repl {:debug true
-               :port 8987
+               :port 8985
                :proj-dir
-               (str (System/getenv "HOME")
-                 "/src/augistints")})
+               (.getPath (cji/file (System/getenv "HOME")
+                           "src" "augistints"))})
 
-  (start-repl {:port 8987
+  (start-repl {:port 8986
                :proj-dir
-               (str (System/getenv "HOME")
-                 "/src/augistints")})
+               (.getPath (cji/file (System/getenv "HOME")
+                           "src" "augistints"))})
 
   (start-repl {:agent-jar
-               (str (System/getenv "HOME")
-                 "/src/alc.start-repl/start-socket-repl-agent.jar")
+               (.getPath (cji/file (System/getenv "HOME")
+                           "src" "alc.start-repl"
+                           "start-socket-repl-agent.jar"))
                :port 8987
                :proj-dir
-               (str (System/getenv "HOME")
-                 "/src/augistints")})
+               (.getPath (cji/file (System/getenv "HOME")
+                           "src" "augistints"))})
 
   (start-repl {:debug true
                :proj-dir
-               (str (System/getenv "HOME")
-                 "/src/antoine")})
+               (.getPath (cji/file (System/getenv "HOME")
+                           "src" "antoine"))})
 
   (start-repl {:debug true
-               :pid "17905"
+               :pid "17905" ; XXX: not likely to be correct
                :proj-dir
-               (str (System/getenv "HOME")
-                 "/src/antoine")})
-  
+               (.getPath (cji/file (System/getenv "HOME")
+                           "src" "antoine"))})
+
+  ;; XXX: doesn't work with boot-based things
   (start-repl {:debug true
                :port 8888
                :proj-dir
-               (str (System/getenv "HOME")
-                 "/src/lumo")})
+               (.getPath (cji/file (System/getenv "HOME")
+                           "src" "lumo"))})
 
   )

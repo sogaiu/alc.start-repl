@@ -1,5 +1,6 @@
 (ns alc.start-repl.impl.jar
   (:require
+   [clojure.java.io :as cji]
    [clojure.java.shell :as cjs]))
 
 ;; NOTES
@@ -17,9 +18,8 @@
 
 (defn build-agent-jar
   [src-dir out-dir jar-name]
-  ;; XXX: windows paths?
-  (let [classes-path (str src-dir "/classes")
-        classes-dir (java.io.File. classes-path)]
+  (let [classes-dir (cji/file src-dir "classes")
+        classes-path (.getPath classes-dir)]
     ;; XXX: classes directory needs to exist and it's likely to be less
     ;;      problematic if empty
     (assert (.delete classes-dir)
@@ -27,8 +27,8 @@
     (.mkdir classes-dir)
     ;; XXX: clear old files?
     (when (.exists classes-dir)
-      ;; XXX: windows paths?
-      (let [jar-path (str out-dir "/" jar-name)]
+      (let [jar-path
+            (.getPath (cji/file out-dir jar-name))]
         ;; create class files
         (cjs/with-sh-dir src-dir
           (cjs/sh "clj" "-Sforce"
@@ -40,18 +40,19 @@
             "agent.mf"
             "-C" "classes"
             "."))
-        ;; XXX: windows paths?
-        (str out-dir "/" jar-name)))))
+        (.getPath (cji/file out-dir jar-name))))))
 
 (comment
 
-  (build-agent-jar (str (System/getenv "HOME")
-                     "/src/alc.start-repl")
-    "/tmp"
+  (build-agent-jar
+    (.getPath (cji/file (System/getenv "HOME")
+                "src" "alc.start-repl"))
+    (System/getProperty "java.io.tmpdir")
     "start-socket-repl-agent.jar")
 
-  (let [src-dir (str (System/getenv "HOME")
-                  "/src/alc.start-repl")
+  (let [src-dir
+        (.getPath (cji/file (System/getProperty "HOME")
+                    "src" "alc.start-repl"))
         out-dir src-dir]
     (build-agent-jar src-dir
       out-dir "start-socket-repl-agent.jar"))
