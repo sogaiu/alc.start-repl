@@ -17,11 +17,6 @@
   (when (re-find #"^(clojure|boot)\." key)
     [key value]))
 
-(defn clojure-server-matcher
-  [[key value]]
-  (when (re-find #"^clojure\.server\.(.*)" key)
-    [key value]))
-
 (defn scan-jvms
   []
   (doall
@@ -39,13 +34,10 @@
                 cmd (.getProperty props "sun.java.command")
                 clojure-entries
                 (keep clojure-jvm-matcher props)
-                repl-entries
-                (keep clojure-server-matcher props)
                 results {:clojure-entries clojure-entries
                          :cmd cmd
                          :pid pid
                          :props props
-                         :repl-entries repl-entries
                          :user-dir user-dir}]
             (.detach vm)
             (conj stats results))
@@ -62,11 +54,6 @@
           (some (fn [[k _]]
                   (= k "boot.class.path"))
             clojure-entries))
-    m))
-
-(defn no-repl?
-  [{:keys [:repl-entries] :as m}]
-  (when (= 0 (count repl-entries))
     m))
 
 (defn paths-eq?
@@ -92,16 +79,14 @@
         ctx (assoc ctx :jvms jvms)
         clojures (keep clojure? jvms)
         ctx (assoc ctx :clojures clojures)
-        ;; XXX: only checking clojure socket repl (not shadow-cljs or boot?)
-        no-repls (keep no-repl? clojures)
-        ctx (assoc ctx :no-repls no-repls)
         self-pid (own-pid)
-        ;; XXX: only match things that don't seem to have socket repls
         matches (filter (fn [{:keys [:pid :user-dir]}]
                           (and (not= pid self-pid) ; skip self
                             (paths-eq? proj-dir user-dir)))
-                  no-repls)
+                  clojures)
         ctx (assoc ctx :matches matches)]
+    (when (< 1 (count matches))
+      (println "multiple pids found"))
     (assoc ctx
       :pids (map #(:pid %)
               matches))))
