@@ -30,81 +30,21 @@
 
 (ns alc.start-repl.core
   (:require
-   [alc.start-repl.impl.attach :as asi.a]
    [alc.start-repl.impl.net :as asi.n]
    [alc.start-repl.impl.pid :as asi.p]
-   [clojure.java.io :as cji]
-   [clojure.string :as cs]))
+   [alc.start-repl.impl.util :as asi.u]
+   [alc.start-repl.impl.vm :as asi.v]
+   [clojure.java.io :as cji]))
 
 (set! *warn-on-reflection* true)
 
-(asi.a/ensure-attach-cp)
-
-;; XXX: ibm has their own package apparently...
-(import '[com.sun.tools.attach
-          AgentInitializationException
-          AgentLoadException
-          VirtualMachine])
-
-(defn instruct-vm
-  [pid port agent-jar]
-   (when-let [^VirtualMachine vm
-              (try
-                (VirtualMachine/attach (str pid))
-                (catch Exception e
-                  (println "attaching failed for pid:" pid)
-                  (println (.getMessage e))
-                  nil))]
-     ;;(println "about to attempt loadAgent for:" pid)
-     (try
-       (.loadAgent vm
-         agent-jar
-         (str port)) ; XXX: work on the format of the passed arg here?
-       (catch AgentInitializationException e
-         (println "AgentInitializationException, repl may not have started")
-         (println "  message:" (.getMessage e))
-         (println e))
-       ;; XXX: seems to happen, yet loading seems successful...
-       (catch AgentLoadException e
-         (println "AgentLoadException, but repl may have started")
-         #_(println "  message:" (.getMessage e)))
-       ;; XXX: this can happen, yet loading may have been successful
-       (catch java.io.IOException e
-         (println "java.io.IOException, but repl may have started")
-         #_(println "  message:" (.getMessage e)))
-       ;; XXX: what could happen here?
-       (catch Exception e
-         (println "Unexpected exception: please report to maintainer")
-         (println "  message:" (.getMessage e))
-         (println e)))
-     (.detach vm)))
-
-;; XXX: review logic here
-;; tries to determine if run from alc.start-repl's source directory
-;; or via some other location
-(defn find-alcsr-src-dir
-  [class-path]
-  (let [paths (cs/split class-path
-                (re-pattern (System/getProperty "path.separator")))]
-    ;; any hits among fuller paths?
-    (if-let [target-dir (first (filter #(re-find #"alc\.start-repl" %)
-                                 paths))]
-      target-dir
-      ;; any hits among relative paths?
-      (first (keep (fn [path]
-                     (let [file (cji/file path)]
-                       (when (not (.isAbsolute file))
-                         (let [full-path (.getCanonicalPath file)]
-                           (when (re-find #"alc\.start-repl" full-path)
-                             full-path)))))
-               paths)))))
 
 (defn start-repl
   [{:keys [:agent-jar :debug :pid :port :proj-dir]}]
   (let [agent-jar (if agent-jar agent-jar
                       ;; XXX: generate jar or use a pre-compiled one?
                       (let [jcp (System/getProperty "java.class.path")
-                            src-dir (find-alcsr-src-dir jcp)
+                            src-dir (asi.u/find-alcsr-src-dir jcp)
                             _ (assert src-dir "Failed to find source directory")
                             alcsr-src-dir (.getParent (cji/file src-dir))
                             ;; XXX: windows paths
@@ -133,17 +73,12 @@
       "Failed to determine pid")
     (assert (= (count pids) 1)
       (str "Did not find exactly one matching pid: " pids))
-    (instruct-vm ^String pid port agent-jar)
+    (asi.v/instruct-vm ^String pid port agent-jar)
     ;; XXX
     (println (str "Tried to start repl for pid: " pid " on port: " port))
     (when debug ctx)))
 
 (comment
-
-  ;; XXX: pid not likely to be correct here
-  (instruct-vm 17364 8987
-    (str (System/getenv "HOME")
-      "/src/alc.start-repl/start-socket-repl-agent.jar"))
 
   (start-repl {:debug true
                :proj-dir
