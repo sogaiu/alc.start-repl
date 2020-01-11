@@ -10,6 +10,9 @@
 ;; - test for both java 8 and 11
 ;; - multiple processes matching for single project
 ;;   - always(?) give feedback when multiple pids detected?
+;;   - find-pids complected / could use some re-working?
+;;     - dropping things that don't pass no-repl? is too early?
+;;     - consider dropping self-pid after matching?
 ;; - repl features
 ;;   - starting prepl instead?
 ;;   - port auto-selection
