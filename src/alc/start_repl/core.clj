@@ -8,16 +8,12 @@
 ;; TODO:
 ;;
 ;; - test for both java 8 and 11
-;; - multiple processes matching for single project
-;;   - always(?) give feedback when multiple pids detected?
-;;   - find-pids complected / could use some re-working?
-;;     - dropping things that don't pass no-repl? is too early?
-;;     - consider dropping self-pid after matching?
 ;; - repl features
 ;;   - starting prepl instead?
 ;;   - port auto-selection
 ;;     - support providing a set or range of port numbers to choose from?
 ;;   - trying different numbers upon bind failure?
+;; - handle windows paths appropriately
 ;; - consider implications of hard-wiring an ipv4 address (127.0.0.1)
 ;;   - arrange to pass agent address to bind to as param?
 ;; - following not supported (yet?)
@@ -40,7 +36,6 @@
    [clojure.java.io :as cji]))
 
 (set! *warn-on-reflection* true)
-
 
 (defn start-repl
   [{:keys [:agent-jar :debug :pid :port :proj-dir]}]
