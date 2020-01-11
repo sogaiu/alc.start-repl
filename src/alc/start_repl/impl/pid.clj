@@ -63,8 +63,7 @@
 
 (defn own-pid
   []
-  (->
-    (java.lang.management.ManagementFactory/getRuntimeMXBean)
+  (-> (java.lang.management.ManagementFactory/getRuntimeMXBean)
     .getName
     (cs/split #"@")
     first))
@@ -86,7 +85,7 @@
                   clojures)
         ctx (assoc ctx :matches matches)]
     (when (< 1 (count matches))
-      (println "multiple pids found"))
+      (println "*** multiple pids found ***"))
     (assoc ctx
       :pids (map #(:pid %)
               matches))))
