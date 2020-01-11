@@ -56,9 +56,12 @@
               agent-jar))
         _ (when port
             (assert (asi.n/check-port port)
-              (str "Port unavailable: " port)))
+              (str "\n"
+                "  Port unavailable: " port)))
         port (or port (asi.n/find-port))
-        _ (assert port "Failed to choose suitable port")
+        _ (assert port
+            (str "\n"
+              "  Failed to choose suitable port"))
         ctx {:agent-jar agent-jar
              :pid pid
              :port port
@@ -70,14 +73,25 @@
                            [(assoc ctx :pid pid)
                             pids pid])
                          [ctx
-                          [pid] pid])]
+                          [pid] pid])
+        proj-dir (if proj-dir proj-dir
+                     (:proj-dir ctx))]
     (assert pid
-      "Failed to determine pid")
+      (str "\n"
+        "Failed to determine pid"))
     (assert (= (count pids) 1)
-      (str "Did not find exactly one matching pid: " pids))
+      (let [pid-str (cs/join ", " pids)]
+        (str "\n"
+          "  Did not find exactly one matching pid: " pid-str "\n"
+          "    Note, :pid argument can be used to select a target process.\n"
+          "    e.g. '{:pid <pid>}'")))
     (asi.v/instruct-vm ^String pid port agent-jar)
     ;; XXX
-    (println (str "Tried to start repl for pid: " pid " on port: " port))
+    (println (str "\n"
+               "Tried to start repl for process:\n"
+               "  pid: " pid "\n"
+               "  proj-dir: " proj-dir "\n"
+               "  port: " port "\n"))
     (when debug ctx)))
 
 (comment
