@@ -11,11 +11,11 @@ Start a socket repl for a running Clojure process, from the command line.
 
 ## Use Cases
 
+* Have multiple Clojure projects and working on more than one at once happens eventually.  Avoid hard-wiring tcp port numbers into deps.edn that may 1) conflict and 2) be tedious to lookup.
+
 * Accidentally evaluated long-running or infinite computation, but no running networked REPL.  Don't give up -- get access to what is going on in a running Clojure process via a newly started socket repl.
 
 * Trying out a project that provides nrepl access but no socket repl.  Avoid initial study and early modification of a project.clj file just to add a socket repl.
-
-* Have multiple Clojure projects and working on more than one at once happens eventually.  Avoid hard-wiring tcp port numbers into deps.edn that may 1) conflict and 2) be tedious to lookup.
 
 ## Quick Trial
 
@@ -25,7 +25,7 @@ Start a socket REPL on port 7650:
 
 ```
 $ cd /home/alice/a-clj-proj-dir
-$ clj -Sdeps '{:deps {alc.start-repl {:git/url "https://github.com/sogaiu/alc.start-repl" :sha "3d135c9e04704a60b056b98ad186bf401ba82b9d"}}}' -m alc.start-repl.main '{:port 7650}'
+$ clj -Sdeps '{:deps {alc.start-repl {:git/url "https://github.com/sogaiu/alc.start-repl" :sha "b27c2464281fd0a769e5930dfd8c26d53f24c031"}}}' -m alc.start-repl.main '{:port 7650}'
 ```
 
 ## Usage
@@ -37,7 +37,7 @@ Edit the `:aliases` section of `~/.clojure/deps.edn` to contain:
    {
     :extra-deps {sogaiu/alc.start-repl
                  {:git/url "https://github.com/sogaiu/alc.start-repl"
-                  :sha "3d135c9e04704a60b056b98ad186bf401ba82b9d"
+                  :sha "b27c2464281fd0a769e5930dfd8c26d53f24c031"}}
     :main-opts ["-m" "alc.start-repl.main"]
    }
 ```
