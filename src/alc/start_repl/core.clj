@@ -7,13 +7,28 @@
 
 ;; TODO:
 ;;
-;; - test for both java 8 and 11
+;; - test
+;;   - consider how to test
+;;     - consider whether babashka might be applied
+;;   - test for both java 8 and 11
+;;   - test different jdks
+;;     - openjdk
+;;     - adoptopenjdk
+;;     - zulu
+;;     - labsjdk
+;;     - coretto
+;;     - others?
+;;   - multiplatform testing
+;; - output
+;;   - silent mode?
+;;   - improve formatting
+;; - consider support for ordinary command line using tools.cli
+;;   - any way to allow supporting clojure map (as string) to specify opts?
 ;; - repl features
 ;;   - starting prepl instead?
 ;;   - port auto-selection
 ;;     - support providing a set or range of port numbers to choose from?
 ;;   - trying different numbers upon bind failure?
-;; - handle windows paths appropriately
 ;; - consider implications of hard-wiring an ipv4 address (127.0.0.1)
 ;;   - arrange to pass agent address to bind to as param?
 ;; - following not supported (yet?)
