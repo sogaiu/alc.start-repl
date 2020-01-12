@@ -19,16 +19,19 @@
 ;;     - coretto
 ;;     - others?
 ;;   - multiplatform testing
-;; - output
-;;   - silent mode?
-;;   - improve formatting
 ;; - consider support for ordinary command line using tools.cli
 ;;   - any way to allow supporting clojure map (as string) to specify opts?
+;; - figure out why AgentLoadException is occuring -- works, but 8 vs 11?
+;; - update docs
+;;   - document process of building agent jar
 ;; - repl features
 ;;   - starting prepl instead?
 ;;   - port auto-selection
 ;;     - support providing a set or range of port numbers to choose from?
 ;;   - trying different numbers upon bind failure?
+;; - output
+;;   - silent mode?
+;;   - improve formatting
 ;; - consider implications of hard-wiring an ipv4 address (127.0.0.1)
 ;;   - arrange to pass agent address to bind to as param?
 ;; - following not supported (yet?)
@@ -38,9 +41,6 @@
 ;;     important
 ;; - possible to get a good idea of whether repl started by examining
 ;;   external jvm's system properties -- but this may not be worth it
-;; - figure out why AgentLoadException is occuring -- works, but 8 vs 11?
-;; - update docs
-;;   - document process of building agent jar
 
 (ns alc.start-repl.core
   (:require
