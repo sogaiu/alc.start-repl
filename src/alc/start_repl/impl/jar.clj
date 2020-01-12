@@ -23,7 +23,8 @@
     ;; XXX: classes directory needs to exist and it's likely to be less
     ;;      problematic if empty
     (assert (.delete classes-dir)
-      (str classes-path " non-empty, please empty"))
+      (str "\n"
+        "  compile output dir non-empty, please empty:" classes-path))
     (.mkdir classes-dir)
     ;; XXX: clear old files?
     (when (.exists classes-dir)
