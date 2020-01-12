@@ -69,12 +69,8 @@
     first))
 
 (defn find-pids
-  [ctx]
-  (let [proj-dir (if-let [proj-dir (:proj-dir ctx)]
-                   proj-dir
-                   (System/getProperty "user.dir"))
-        ctx (assoc ctx :proj-dir proj-dir)
-        jvms (scan-jvms)
+  [{:keys [:proj-dir] :as ctx}]
+  (let [jvms (scan-jvms)
         ctx (assoc ctx :jvms jvms)
         clojures (keep clojure? jvms)
         ctx (assoc ctx :clojures clojures)

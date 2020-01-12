@@ -100,12 +100,16 @@
           "  Did not find exactly one matching pid: " pid-str "\n"
           "    Note, :pid argument can be used to select a target process.\n"
           "    e.g. '{:pid <pid>}'")))
-    (asi.v/instruct-vm ^String pid port agent-jar)
-    ;; XXX
-    (println (str "\n"
-               "Tried to start repl for process:\n"
-               "  pid: " pid "\n"
-               "  proj-dir: " proj-dir "\n"
+    ;; for formatting...
+    (let [res (asi.v/interpret-res
+                (asi.v/instruct-vm ^String pid port agent-jar))]
+      (println)
+      (if res
+        (println "Repl may have started for process:")
+        (println "Repl may not have started for process:")))
+    (println (str "  pid: " pid "\n"
+               (when proj-dir
+                 (str "  proj-dir: " proj-dir "\n"))
                "  port: " port "\n"))
     (when debug ctx)))
 
