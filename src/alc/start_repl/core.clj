@@ -67,7 +67,7 @@
                   agent-jar
                   (.getPath (cji/file alcsr-src-dir
                               "start-socket-repl-agent.jar"))]
-              (assert agent-jar "Failed to create agent-jar")
+              (assert agent-jar "Failed to find agent-jar")
               agent-jar))
         _ (when port
             (assert (asi.n/check-port port)
