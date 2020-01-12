@@ -78,6 +78,22 @@ Specifically, via the `loadAgent` method of the `VirtualMachine` class in the JD
 
 * For some reason, `clojure.main/repl` doesn't work as-is in the context of `loadAgent` for recent JDKs (JDK >= 9?).  This appears to have something to do with class loaders.  Used a modified version of `clojure.main/repl` to cope.  It's not clear yet whether the changes have some unforeseen side-effects.
 
+## Building the JAR
+
+To build the jar file used by `loadAgent`:
+
+* Ensure that the `alc.start-repl` project directory has an empty subdirectory named `classes`.
+
+* From the same project directory:
+
+```
+$ clj -m alc.start-repl.build
+```
+
+If all went well, this should produce a file named `start-socket-repl-agent.jar` in the project directory.
+
+Details of the compilation process can be found in `alc.start-repl.impl.jar`.
+
 ## References
 
 * Pure Clojure implementation of a Java agent by dgopstein.  He generously shared his implementation and provided a helpful explanation:

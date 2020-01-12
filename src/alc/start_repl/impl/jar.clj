@@ -14,7 +14,6 @@
 ;; TODO:
 ;;
 ;; - consider including source code in jar
-;; - document building process
 
 (defn build-agent-jar
   [src-dir out-dir jar-name]
@@ -31,6 +30,10 @@
       (let [jar-path
             (.getPath (cji/file out-dir jar-name))]
         ;; create class files
+        ;; XXX: using clojure 1.9 and above leads to portions of spec being
+        ;;      included...it wasn't clear if this could be a problem, so
+        ;;      this project uses clojure 1.8 -- it may only be necessary
+        ;;      for the purpose of building the jar
         (cjs/with-sh-dir src-dir
           (cjs/sh "clj" "-Sforce"
             "-e" "(compile 'alc.start-repl.agent)"))

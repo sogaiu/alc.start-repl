@@ -23,7 +23,7 @@
 ;;   - any way to allow supporting clojure map (as string) to specify opts?
 ;; - figure out why AgentLoadException is occuring -- works, but 8 vs 11?
 ;; - update docs
-;;   - document process of building agent jar
+;;   - sync docs
 ;; - repl features
 ;;   - starting prepl instead?
 ;;   - port auto-selection
