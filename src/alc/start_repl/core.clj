@@ -19,7 +19,7 @@
 ;;     - coretto
 ;;     - others?
 ;;   - multiplatform testing
-;; - consider support for ordinary command line using tools.cli
+;; - command line handling
 ;;   - any way to allow supporting clojure map (as string) to specify opts?
 ;; - figure out why AgentLoadException is occuring -- works, but 8 vs 11?
 ;; - update docs
@@ -36,11 +36,15 @@
 ;;   - arrange to pass agent address to bind to as param?
 ;; - following not supported (yet?)
 ;;   - boot socket repl
-;;     (loadAgent fails -- NoClassDefFoundError: cloure/lang/Var)
-;;     it's easy to start a boot socket repl though, so may be it's not so
-;;     important
+;;     - (loadAgent fails -- NoClassDefFoundError: cloure/lang/Var)
+;;     - it's easy to start a boot socket repl though, so may be it's not so
+;;       important
+;;     - may be it's worth understanding why it doesn't work though
 ;; - possible to get a good idea of whether repl started by examining
 ;;   external jvm's system properties -- but this may not be worth it
+;; - possible to determine proj-dir even if none specified if appropriate
+;;   pid is known, but may be this is not worth it
+;; - possibly resolve value of proj-dir (as full path?)
 
 (ns alc.start-repl.core
   (:require
