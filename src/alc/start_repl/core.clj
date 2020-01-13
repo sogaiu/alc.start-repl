@@ -46,29 +46,21 @@
   (:require
    [alc.start-repl.impl.net :as asi.n]
    [alc.start-repl.impl.pid :as asi.p]
+   [alc.start-repl.impl.report :as asi.r]
    [alc.start-repl.impl.util :as asi.u]
    [alc.start-repl.impl.vm :as asi.v]
-   [clojure.java.io :as cji]
    [clojure.string :as cs]))
 
 (set! *warn-on-reflection* true)
 
 (defn start-repl
   [{:keys [:agent-jar :debug :pid :port :proj-dir]}]
-  (let [agent-jar
-        (if agent-jar agent-jar
-            ;; XXX: generate jar or use a pre-compiled one?
-            (let [jcp (System/getProperty "java.class.path")
-                  src-dir (asi.u/find-alcsr-src-dir jcp)
-                  _ (assert src-dir
-                      (str "\n"
-                        "Failed to find source directory"))
-                  alcsr-src-dir (.getParent (cji/file src-dir))
-                  agent-jar
-                  (.getPath (cji/file alcsr-src-dir
-                              "start-socket-repl-agent.jar"))]
-              (assert agent-jar "Failed to find agent-jar")
-              agent-jar))
+  (let [agent-jar (if agent-jar agent-jar
+                      ;; XXX: generate jar or use a pre-compiled one?
+                      (asi.u/find-agent-jar))
+        _ (assert agent-jar
+            (str "\n"
+              "  Failed to find agent-jar"))
         _ (when port
             (assert (asi.n/check-port port)
               (str "\n"
@@ -77,43 +69,37 @@
         _ (assert port
             (str "\n"
               "  Failed to choose suitable port"))
+        [pid pids proj-dir]
+        (if pid
+          [pid [pid] proj-dir]
+          (let [proj-dir (if proj-dir proj-dir
+                             ;; no pid and no proj-dir -> user.dir is proj-dir
+                             (System/getProperty "user.dir"))
+                pids (asi.p/find-pids proj-dir)]
+            [(first pids) pids proj-dir]))
+        _ (assert pid
+            (str "\n"
+              "  Failed to determine pid"))
+        _ (assert (= (count pids) 1)
+            (str "\n"
+              "  Did not find 1 matching pid: " (cs/join ", " pids) "\n"
+              "    Note, --pid arg can be used to select a target process.\n"
+              "    e.g. '{:pid <pid>}'"))
+        res (asi.v/interpret-res
+              (asi.v/instruct-vm ^String pid port agent-jar))
         ctx {:agent-jar agent-jar
              :pid pid
+             :pids pids
              :port port
-             :proj-dir proj-dir}
-        [ctx pids pid] (if-not pid
-                         (let [ctx (asi.p/find-pids ctx)
-                               pids (:pids ctx)
-                               pid (first pids)]
-                           [(assoc ctx :pid pid)
-                            pids pid])
-                         [ctx
-                          [pid] pid])
-        proj-dir (if proj-dir proj-dir
-                     (:proj-dir ctx))]
-    (assert pid
-      (str "\n"
-        "Failed to determine pid"))
-    (assert (= (count pids) 1)
-      (let [pid-str (cs/join ", " pids)]
-        (str "\n"
-          "  Did not find exactly one matching pid: " pid-str "\n"
-          "    Note, :pid argument can be used to select a target process.\n"
-          "    e.g. '{:pid <pid>}'")))
+             :proj-dir proj-dir
+             :res res}]
     ;; for formatting...
-    (let [res (asi.v/interpret-res
-                (asi.v/instruct-vm ^String pid port agent-jar))]
-      (println)
-      (if res
-        (println "Repl may have started for process:")
-        (println "Repl may not have started for process:")))
-    (println (str "  pid: " pid "\n"
-               (when proj-dir
-                 (str "  proj-dir: " proj-dir "\n"))
-               "  port: " port "\n"))
+    (asi.r/report ctx)
     (when debug ctx)))
 
 (comment
+
+  (require '[clojure.java.io :as cji])
 
   (start-repl {:debug true
                :proj-dir

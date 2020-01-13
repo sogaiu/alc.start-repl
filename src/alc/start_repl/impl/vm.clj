@@ -18,8 +18,8 @@
              (try
                (VirtualMachine/attach (str pid))
                (catch Exception e
-                 (println "attaching failed for pid:" pid)
-                 (println (.getMessage e))
+                 (println "Failed to attach to pid:" pid)
+                 (println "  message:" (.getMessage e))
                  nil))]
     ;;(println "about to attempt loadAgent for:" pid)
     (let [res
@@ -40,7 +40,7 @@
               :agent-load-ex)
             ;; XXX: this can happen, yet loading may have been successful
             (catch java.io.IOException e
-              (println "java.io.IOException, but repl may have started")
+              (println "IOException, but repl may have started")
               #_(println "  message:" (.getMessage e))
               :io-ex)
             ;; XXX: what could happen here?

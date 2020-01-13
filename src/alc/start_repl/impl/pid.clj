@@ -69,22 +69,18 @@
     first))
 
 (defn find-pids
-  [{:keys [:proj-dir] :as ctx}]
-  (let [jvms (scan-jvms)
-        ctx (assoc ctx :jvms jvms)
-        clojures (keep clojure? jvms)
-        ctx (assoc ctx :clojures clojures)
+  [proj-dir]
+  (let [clojures (keep clojure? (scan-jvms))
         self-pid (own-pid)
         matches (filter (fn [{:keys [:pid :user-dir]}]
                           (and (not= pid self-pid) ; skip self
                             (paths-eq? proj-dir user-dir)))
                   clojures)
-        ctx (assoc ctx :matches matches)]
+        pids (map #(:pid %)
+               matches)]
     (when (< 1 (count matches))
       (println "*** multiple pids found ***"))
-    (assoc ctx
-      :pids (map #(:pid %)
-              matches))))
+    pids))
 
 (comment
 
