@@ -45,6 +45,9 @@
 ;; - possible to determine proj-dir even if none specified if appropriate
 ;;   pid is known, but may be this is not worth it
 ;; - possibly resolve value of proj-dir (as full path?)
+;; - could report on approach taken (e.g. if pid is specified, not going to
+;;   scan for pids, if pid is not specified, will base search on proj-dir or
+;;   user.dir value)
 
 (ns alc.start-repl.core
   (:require
