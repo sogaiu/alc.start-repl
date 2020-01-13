@@ -21,7 +21,7 @@
                   (and (.exists thing)
                     (.isDirectory thing)))
                "Must be an existing directory"]]
-   ["-g" "--debug DEBUG" "Debug output"]
+   ["-g" "--debug" "Debug output"]
    ["-h" "--help" "Show usage"]
    ["-i" "--pid PID" "Process identifier"
     :default nil
