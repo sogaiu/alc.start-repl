@@ -61,7 +61,7 @@
 (set! *warn-on-reflection* true)
 
 (defn start-repl
-  [{:keys [:agent-jar :debug :pid :port :proj-dir]}]
+  [{:keys [:agent-jar :pid :port :proj-dir]}]
   (let [agent-jar (if agent-jar agent-jar
                       ;; XXX: generate jar or use a pre-compiled one?
                       (asi.u/find-agent-jar))
@@ -92,14 +92,13 @@
               "  Found more than one matching pid: " (cs/join ", " pids) "\n"
               "    Note, --pid arg can be used to select a target process."))
         ctx {:agent-jar agent-jar
-             :debug debug
              :pid pid
              :pids pids
              :port port
              :proj-dir proj-dir
              :res (asi.v/instruct-vm ^String pid port agent-jar)}]
     (asi.r/report ctx)
-    (when debug ctx)))
+    ctx))
 
 (comment
 
