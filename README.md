@@ -11,7 +11,7 @@ Start a socket repl for a running Clojure process, from the command line.
 
 ## Use Cases
 
-* Have multiple Clojure projects and working on more than one at once happens eventually.  Avoid hard-wiring tcp port numbers into deps.edn that may 1) conflict and 2) be tedious to lookup.
+* Having multiple Clojure projects and working on more than one at once happens eventually.  Avoid hard-wiring tcp port numbers into deps.edn that may 1) conflict and 2) be tedious to lookup.
 
 * Accidentally evaluated long-running or infinite computation, but no running networked REPL.  Don't give up -- get access to what is going on in a running Clojure process via a newly started socket repl.
 
@@ -25,7 +25,7 @@ Start a socket REPL on port 7650:
 
 ```
 $ cd /home/alice/a-clj-proj-dir
-$ clj -Sdeps '{:deps {alc.start-repl {:git/url "https://github.com/sogaiu/alc.start-repl" :sha "b27c2464281fd0a769e5930dfd8c26d53f24c031"}}}' -m alc.start-repl.main '{:port 7650}'
+$ clj -Sdeps '{:deps {alc.start-repl {:git/url "https://github.com/sogaiu/alc.start-repl" :sha "4de1af76d669f51e6e553937885192a404207e11"}}}' -m alc.start-repl.main --port 7650
 ```
 
 ## Usage
@@ -37,7 +37,7 @@ Edit the `:aliases` section of `~/.clojure/deps.edn` to contain:
    {
     :extra-deps {sogaiu/alc.start-repl
                  {:git/url "https://github.com/sogaiu/alc.start-repl"
-                  :sha "b27c2464281fd0a769e5930dfd8c26d53f24c031"}}
+                  :sha "4de1af76d669f51e6e553937885192a404207e11"}}
     :main-opts ["-m" "alc.start-repl.main"]
    }
 ```
@@ -48,13 +48,13 @@ Start a socket REPL on port 8888:
 
 ```
 $ cd /home/alice/a-clj-proj-dir
-$ clj -A:alc.start-repl '{:port 8888}'
+$ clj -A:alc.start-repl --port 8888
 ```
 
 -OR-
 
 ```
-$ clj -A:alc.start-repl '{:port 8888 :proj-dir "/home/alice/a-clj-proj-dir"}'
+$ clj -A:alc.start-repl --port 8888 --proj-dir /home/alice/a-clj-proj-dir
 ```
 
 Start a socket REPL, letting the system choose a port number:
@@ -94,7 +94,7 @@ If all went well, this should produce a file named `start-socket-repl-agent.jar`
 
 Details of the compilation process can be found in `alc.start-repl.impl.jar`.
 
-## References
+## Acknowledgments
 
 * Pure Clojure implementation of a Java agent by dgopstein.  He generously shared his implementation and provided a helpful explanation:
 
@@ -105,3 +105,7 @@ Details of the compilation process can be found in `alc.start-repl.impl.jar`.
   <https://github.com/djpowell/liverepl>
 
   However, it doesn't appear to work with Java >= 9.  (FWIW, looks like it can be fixed by tweaking some class loader related things, and I may have gotten it working.)
+
+* A modified version of clojure.tools.cli is included.
+
+* A modified version of clojure.main/repl is included.
