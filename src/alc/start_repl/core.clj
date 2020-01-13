@@ -7,6 +7,8 @@
 
 ;; TODO:
 ;;
+;; - update docs
+;;   - sync docs
 ;; - test
 ;;   - consider how to test
 ;;     - consider whether babashka might be applied
@@ -22,8 +24,6 @@
 ;; - command line handling
 ;;   - any way to allow supporting clojure map (as string) to specify opts?
 ;; - figure out why AgentLoadException is occuring -- works, but 8 vs 11?
-;; - update docs
-;;   - sync docs
 ;; - repl features
 ;;   - starting prepl instead?
 ;;   - port auto-selection
@@ -33,7 +33,7 @@
 ;;   - silent mode?
 ;;   - improve formatting
 ;; - consider implications of hard-wiring an ipv4 address (127.0.0.1)
-;;   - arrange to pass agent address to bind to as param?
+;;   - arrange to pass ip address to agent as param?
 ;; - following not supported (yet?)
 ;;   - boot socket repl
 ;;     - (loadAgent fails -- NoClassDefFoundError: cloure/lang/Var)

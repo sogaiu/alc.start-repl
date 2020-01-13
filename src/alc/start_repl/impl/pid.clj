@@ -88,9 +88,9 @@
 
   (scan-jvms)
 
-  (let [ctx {:proj-dir
-             (.getPath (cji/file (System/getenv "HOME")
-                         "src" "augistints"))}]
-    (:pids (find-pids ctx)))
+  (let [proj-dir
+        (.getPath (cji/file (System/getenv "HOME")
+                    "src" "augistints"))]
+    (find-pids proj-dir))
 
   )
