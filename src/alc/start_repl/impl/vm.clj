@@ -12,6 +12,18 @@
 
 (set! *warn-on-reflection* true)
 
+(defn interpret-res
+  [res]
+  (get {;; XXX: probable failure?
+        :agent-init-ex nil
+        :unknown-ex nil
+        ;; XXX: possibly succeeded
+        :agent-load-ex true
+        :io-ex true
+        ;; highest chance of success?
+        true true}
+    res))
+
 (defn instruct-vm
   [pid port agent-jar]
   (when-let [^VirtualMachine vm
@@ -50,19 +62,7 @@
               (println e)
               :unknown-ex))]
       (.detach vm)
-      res)))
-
-(defn interpret-res
-  [res]
-  (get {;; XXX: probable failure?
-        :agent-init-ex nil
-        :unknown-ex nil
-        ;; XXX: possibly succeeded
-        :agent-load-ex true
-        :io-ex true
-        ;; highest chance of success?
-        true true}
-    res))
+      (interpret-res res))))
 
 (comment
 

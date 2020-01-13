@@ -89,14 +89,12 @@
               "  Did not find 1 matching pid: " (cs/join ", " pids) "\n"
               "    Note, --pid arg can be used to select a target process.\n"
               "    e.g. '{:pid <pid>}'"))
-        res (asi.v/interpret-res
-              (asi.v/instruct-vm ^String pid port agent-jar))
         ctx {:agent-jar agent-jar
              :pid pid
              :pids pids
              :port port
              :proj-dir proj-dir
-             :res res}]
+             :res (asi.v/instruct-vm ^String pid port agent-jar)}]
     ;; for formatting...
     (asi.r/report ctx)
     (when debug ctx)))
