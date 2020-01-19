@@ -109,3 +109,15 @@ Details of the compilation process can be found in `alc.start-repl.impl.jar`.
 * A modified version of clojure.tools.cli is included.
 
 * A modified version of clojure.main/repl is included.
+
+## Related
+
+* [clj-async-profiler](https://github.com/clojure-goes-fast/clj-async-profiler) uses `loadAgent` from `VirtualMachine` as well.  It may have a better approach to ensuring the Attach API is available.
+
+* [jattach](https://github.com/apangin/jattach) can be used to load the agent jar in this project without an installation of OpenJDK:
+
+  ```
+  No installed JDK required, works with just JRE.
+  ```
+
+  Perhaps the code can be adapted for use with GraalVM's native image so this project might be a target of native image too.
